@@ -1,0 +1,1084 @@
+/* ==========================================================
+   ROMANTIC PIXEL FLIGHT v4.0 - MULTI-LEVEL SPACE SHOOTER WITH BOSS
+   ========================================================== */
+
+:root {
+  --color-bg-base: #fdf4f8;
+  --color-bg-gradient-top: #fce7f3;
+  --color-bg-gradient-mid: #e0f2fe;
+  --color-bg-gradient-bot: #fef9c3;
+  
+  --color-panel: #ffffff;
+  --color-panel-soft: #fff5f8;
+  
+  --color-magenta: #db2777;
+  --color-magenta-bright: #ec4899;
+  --color-pink-primary: #f43f5e;
+  --color-pink-soft: #fbcfe8;
+  --color-blue-sky: #0284c7;
+  --color-blue-bright: #38bdf8;
+  --color-blue-soft: #e0f2fe;
+  --color-yellow: #facc15;
+  --color-yellow-soft: #fef08a;
+  --color-green-wa: #16a34a;
+  --color-green-wa-bright: #22c55e;
+  
+  --color-border-3d: #1e1b4b;
+  --color-text-dark: #1e1b4b;
+  --color-text-muted: #64748b;
+  --color-white: #ffffff;
+  
+  --font-pixel-arcade: 'Press Start 2P', monospace;
+  --font-pixel-dialog: 'VT323', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  image-rendering: pixelated;
+}
+
+body {
+  background: linear-gradient(180deg, var(--color-bg-gradient-top) 0%, var(--color-bg-gradient-mid) 40%, var(--color-bg-gradient-bot) 100%);
+  color: var(--color-text-dark);
+  font-family: var(--font-pixel-dialog);
+  font-size: 21px;
+  line-height: 1.4;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Background Ambient Canvas */
+#ambient-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* App Container */
+.app-container {
+  position: relative;
+  z-index: 10;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 16px 80px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* 3D Chunky Panels */
+.pixel-box-3d {
+  background-color: var(--color-panel);
+  border: 4px solid var(--color-border-3d);
+  border-radius: 12px;
+  box-shadow: 
+    0 8px 0 var(--color-border-3d),
+    8px 14px 0 rgba(219, 39, 119, 0.25);
+  position: relative;
+  padding: 24px;
+}
+
+/* Header */
+.retro-header-3d {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #ffffff;
+  padding: 14px 20px;
+  border: 4px solid var(--color-border-3d);
+  border-radius: 12px;
+  box-shadow: 0 6px 0 var(--color-border-3d);
+}
+
+.header-badge {
+  font-family: var(--font-pixel-arcade);
+  font-size: 11px;
+  color: var(--color-magenta);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 1px;
+}
+
+.blinking-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #22c55e;
+  border-radius: 2px;
+  display: inline-block;
+  box-shadow: 0 0 8px #22c55e;
+  animation: blink 1s infinite alternate;
+}
+
+@keyframes blink {
+  from { opacity: 0.4; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1.15); }
+}
+
+/* Banner Title */
+.banner-section {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.main-title {
+  font-family: var(--font-pixel-arcade);
+  font-size: clamp(24px, 5.5vw, 40px);
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+  color: var(--color-text-dark);
+  text-shadow: 3px 3px 0 #ffffff, 6px 6px 0 var(--color-pink-soft);
+}
+
+.glow-pink { color: #db2777; }
+.glow-cyan { color: #0284c7; }
+
+.subtitle {
+  font-size: 24px;
+  color: #831843;
+  font-weight: bold;
+}
+
+/* Mode Switcher */
+.mode-switcher-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.switcher-label {
+  font-family: var(--font-pixel-arcade);
+  font-size: 11px;
+  color: var(--color-blue-sky);
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.mode-buttons {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ==========================================================
+   SOLID 3D TACTILE BUTTONS
+   ========================================================== */
+.btn-3d {
+  font-family: var(--font-pixel-arcade);
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 14px 20px;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  user-select: none;
+  font-weight: bold;
+  opacity: 1 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 0 var(--color-border-3d);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  position: relative;
+}
+
+.btn-3d:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 0 var(--color-border-3d);
+  filter: brightness(1.05);
+}
+
+.btn-3d:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--color-border-3d);
+}
+
+.btn-sm-3d {
+  font-size: 10px;
+  padding: 10px 14px;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--color-border-3d);
+}
+.btn-sm-3d:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 0 var(--color-border-3d);
+}
+.btn-sm-3d:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 var(--color-border-3d);
+}
+
+/* 3D Button Palettes */
+.btn-yellow-3d { background-color: var(--color-yellow); color: var(--color-text-dark); }
+.btn-cyan-3d { background-color: #38bdf8; color: #0c4a6e; }
+.btn-magenta-3d { background-color: #ec4899; color: #ffffff; }
+.btn-pink-3d { background-color: #f43f5e; color: #ffffff; }
+.btn-mode-3d { background-color: #f1f5f9; color: #475569; }
+.btn-mode-3d.active-mode {
+  background-color: #f43f5e;
+  color: #ffffff;
+  border-color: var(--color-border-3d);
+  box-shadow: 0 6px 0 var(--color-border-3d), 0 0 12px rgba(244, 63, 94, 0.4);
+}
+
+.btn-secret-key-3d {
+  background: linear-gradient(135deg, #f59e0b 0%, #ec4899 50%, #8b5cf6 100%);
+  color: #ffffff;
+  font-size: 13px;
+  padding: 18px 24px;
+  border: 4px solid var(--color-border-3d);
+  border-radius: 12px;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 0 var(--color-border-3d), 0 0 20px rgba(236, 72, 153, 0.6);
+  letter-spacing: 1px;
+  animation: secretPulse 2s infinite alternate;
+}
+
+@keyframes secretPulse {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.2); box-shadow: 0 8px 0 var(--color-border-3d), 0 0 30px rgba(245, 158, 11, 0.8); }
+}
+
+/* ==========================================================
+   3D CANVAS VIEWER STAGE
+   ========================================================== */
+.viewer-card-3d {
+  padding: 0;
+  overflow: hidden;
+  background: #fdf2f8;
+  border: 4px solid var(--color-border-3d);
+  border-radius: 14px;
+  box-shadow: 0 8px 0 var(--color-border-3d);
+}
+
+.canvas-viewport {
+  width: 100%;
+  height: 440px;
+  position: relative;
+  background: linear-gradient(180deg, #bae6fd 0%, #fbcfe8 75%, #fed7aa 100%);
+  overflow: hidden;
+}
+
+#three-container,
+#canvas-2d-orbit {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.canvas-overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.canvas-overlay.top-left {
+  top: 14px;
+  left: 14px;
+  right: 14px;
+}
+
+.status-pill-3d {
+  background-color: #ffffff;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 8px;
+  box-shadow: 0 4px 0 var(--color-border-3d);
+  color: var(--color-text-dark);
+  padding: 8px 14px;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 95%;
+  font-weight: bold;
+}
+
+.canvas-toolbar-3d {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 0 10px;
+  z-index: 15;
+}
+
+/* ==========================================================
+   RPG DIALOGUE CARD & CAT AVATAR
+   ========================================================== */
+.dialogue-card-3d {
+  display: flex;
+  gap: 22px;
+  background-color: #ffffff;
+  border-color: var(--color-border-3d);
+  align-items: stretch;
+}
+
+@media (max-width: 640px) {
+  .dialogue-card-3d {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.avatar-speaker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pilot-badge-3d {
+  font-family: var(--font-pixel-arcade);
+  font-size: 9px;
+  background: var(--color-magenta);
+  color: #fff;
+  padding: 5px 10px;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 6px;
+  box-shadow: 0 3px 0 var(--color-border-3d);
+}
+
+.pixel-cat-avatar-3d {
+  width: 96px;
+  height: 96px;
+  background: #fdf2f8;
+  border: 4px solid var(--color-border-3d);
+  border-radius: 10px;
+  box-shadow: 0 6px 0 var(--color-border-3d);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cat-face-ui {
+  position: relative;
+  width: 72px;
+  height: 62px;
+  background: #ffffff;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 6px;
+}
+
+.cat-ear {
+  position: absolute;
+  top: -16px;
+  width: 0;
+  height: 0;
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-bottom: 17px solid #f472b6;
+}
+.ear-l { left: 4px; }
+.ear-r { right: 4px; }
+
+.cat-eyes {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 14px 0 14px;
+}
+
+.eye {
+  width: 8px;
+  height: 10px;
+  background-color: var(--color-border-3d);
+  border-radius: 2px;
+  position: relative;
+  animation: catBlink 3.5s infinite;
+}
+
+.eye::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 3px;
+  height: 3px;
+  background: #fff;
+}
+
+@keyframes catBlink {
+  0%, 96%, 100% { transform: scaleY(1); }
+  98% { transform: scaleY(0.1); }
+}
+
+.cat-blush {
+  position: absolute;
+  bottom: 14px;
+  width: 10px;
+  height: 6px;
+  background: #f43f5e;
+  border-radius: 2px;
+}
+.blush-l { left: 6px; }
+.blush-r { right: 6px; }
+
+.cat-nose {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 4px;
+  background: #f43f5e;
+  border-radius: 2px;
+}
+
+.cat-goggles {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+}
+
+.dialogue-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dialogue-sender {
+  font-family: var(--font-pixel-arcade);
+  font-size: 10px;
+  color: var(--color-magenta);
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.dialogue-text-3d {
+  font-size: 26px;
+  color: var(--color-text-dark);
+  min-height: 80px;
+  line-height: 1.35;
+  background: #fff5f8;
+  border: 3px dashed #f472b6;
+  border-radius: 8px;
+  padding: 14px 18px;
+}
+
+.dialogue-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.press-hint { font-size: 18px; color: var(--color-text-muted); }
+
+/* ==========================================================
+   FEATURE 1: 3D RETRO JUKEBOX
+   ========================================================== */
+.jukebox-section { background: #ffffff; }
+
+.section-badge-3d {
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  background-color: var(--color-yellow);
+  color: var(--color-text-dark);
+  font-family: var(--font-pixel-arcade);
+  font-size: 10px;
+  padding: 6px 12px;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 6px;
+  box-shadow: 0 4px 0 var(--color-border-3d);
+  font-weight: bold;
+}
+
+.section-title {
+  font-family: var(--font-pixel-arcade);
+  font-size: 18px;
+  color: var(--color-text-dark);
+  margin-bottom: 8px;
+}
+
+.section-desc {
+  font-size: 20px;
+  color: #475569;
+  margin-bottom: 18px;
+}
+
+.jukebox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.song-card-3d {
+  background: #f8fafc;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--color-border-3d);
+  transition: all 0.1s ease;
+}
+
+.song-card-3d:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 0 var(--color-border-3d);
+  background: #f0fdf4;
+}
+
+.song-card-3d.active-song {
+  background: #ec4899;
+  color: #ffffff;
+  border-color: var(--color-border-3d);
+  box-shadow: 0 5px 0 var(--color-border-3d);
+}
+
+.song-card-3d.active-song strong,
+.song-card-3d.active-song p { color: #ffffff !important; }
+
+.song-icon { font-size: 24px; }
+.song-info strong { display: block; font-size: 19px; color: var(--color-text-dark); }
+.song-info p { font-size: 16px; color: #64748b; }
+
+.jukebox-visualizer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f1f5f9;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-top: 10px;
+}
+
+.now-playing-label {
+  font-family: var(--font-pixel-arcade);
+  font-size: 10px;
+  color: var(--color-blue-sky);
+}
+
+.audio-bars-container {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  height: 20px;
+}
+
+.bar {
+  width: 6px;
+  background-color: var(--color-pink-primary);
+  border: 1px solid var(--color-border-3d);
+  height: 4px;
+}
+
+.audio-bars-container.playing .bar:nth-child(1) { animation: jumpBar 0.5s infinite alternate; }
+.audio-bars-container.playing .bar:nth-child(2) { animation: jumpBar 0.7s infinite alternate 0.1s; }
+.audio-bars-container.playing .bar:nth-child(3) { animation: jumpBar 0.4s infinite alternate 0.2s; }
+.audio-bars-container.playing .bar:nth-child(4) { animation: jumpBar 0.6s infinite alternate 0.15s; }
+.audio-bars-container.playing .bar:nth-child(5) { animation: jumpBar 0.8s infinite alternate 0.05s; }
+
+@keyframes jumpBar {
+  0% { height: 4px; }
+  100% { height: 20px; }
+}
+
+/* ==========================================================
+   FEATURE 2: ROMANTIC QUIZ
+   ========================================================== */
+.quiz-section { background: #ffffff; }
+
+.quiz-card-3d {
+  background: #fff5f8;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 6px 0 var(--color-border-3d);
+}
+
+.quiz-question-box { margin-bottom: 16px; }
+
+.quiz-q-num {
+  font-family: var(--font-pixel-arcade);
+  font-size: 10px;
+  color: var(--color-magenta);
+  margin-bottom: 6px;
+}
+
+.quiz-question-text {
+  font-size: 26px;
+  color: var(--color-text-dark);
+  font-weight: bold;
+}
+
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-option-btn-3d {
+  background: #ffffff;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 8px;
+  padding: 12px 16px;
+  text-align: left;
+  font-family: var(--font-pixel-dialog);
+  font-size: 22px;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--color-border-3d);
+  transition: all 0.08s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quiz-option-btn-3d:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 0 var(--color-border-3d);
+  background: #fef08a;
+}
+
+.quiz-result-box-3d {
+  display: none;
+  background: #f0fdf4;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  margin-top: 14px;
+}
+
+.badge-score-3d {
+  font-family: var(--font-pixel-arcade);
+  font-size: 14px;
+  color: #15803d;
+  background: #bbf7d0;
+  display: inline-block;
+  padding: 8px 16px;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 6px;
+  box-shadow: 0 4px 0 var(--color-border-3d);
+  margin-bottom: 8px;
+}
+
+/* ==========================================================
+   FEATURE 3: 3D SECRET LOVE LETTER ENVELOPE
+   ========================================================== */
+.letter-section { background: #ffffff; text-align: center; }
+
+.envelope-wrapper-3d {
+  display: inline-block;
+  background: #fed7aa;
+  border: 4px solid var(--color-border-3d);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 0 var(--color-border-3d);
+  cursor: pointer;
+  transform: translateY(-4px);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  max-width: 500px;
+  width: 100%;
+}
+
+.envelope-wrapper-3d:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 0 var(--color-border-3d);
+}
+
+.envelope-wrapper-3d:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--color-border-3d);
+}
+
+.letter-content-box {
+  display: none;
+  background: #fffbeb;
+  border: 3px dashed #d97706;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  text-align: left;
+  font-size: 22px;
+  color: #78350f;
+  line-height: 1.4;
+}
+
+/* ==========================================================
+   FEATURE 4: SECRET KEY TO "RUANG HATIKU"
+   ========================================================== */
+.secret-key-section {
+  text-align: center;
+  background: #fff1f2;
+  border: 4px solid var(--color-border-3d);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 8px 0 var(--color-border-3d), 0 0 20px rgba(244, 63, 94, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.secret-key-desc {
+  font-size: 22px;
+  color: #831843;
+  max-width: 600px;
+  font-weight: bold;
+}
+
+/* ==========================================================
+   MULTI-LEVEL SPACE SHOOTER MODAL WITH FINAL BOSS
+   ========================================================== */
+#shooter-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.95);
+  z-index: 10000;
+  padding: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.shooter-cabinet-3d {
+  background: #110924;
+  border: 5px solid #38bdf8;
+  border-radius: 16px;
+  box-shadow: 0 10px 0 #000, 0 0 35px rgba(56, 189, 248, 0.85);
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.shooter-top-bar {
+  background: #1e113a;
+  padding: 10px 16px;
+  border-bottom: 3px solid #38bdf8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-pixel-arcade);
+  font-size: 11px;
+  color: #fde047;
+}
+
+/* Boss Health Bar HUD */
+.boss-hud-bar {
+  background: #090314;
+  border-bottom: 2px solid #ef4444;
+  padding: 6px 16px;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.boss-name-label {
+  font-family: var(--font-pixel-arcade);
+  font-size: 9px;
+  color: #f43f5e;
+}
+
+.boss-hp-track {
+  flex-grow: 1;
+  height: 12px;
+  background: #334155;
+  border: 2px solid #ffffff;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.boss-hp-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #ef4444, #f43f5e, #fb7185);
+  transition: width 0.15s ease;
+}
+
+#shooter-canvas {
+  width: 100%;
+  height: 380px;
+  display: block;
+  background: #090314;
+  cursor: crosshair;
+}
+
+.shooter-bottom-bar {
+  background: #170d2f;
+  padding: 12px 16px;
+  border-top: 3px solid #38bdf8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.shooter-instructions { font-size: 16px; color: #93c5fd; }
+
+/* ==========================================================
+   QUEST & CHALLENGES SECTION
+   ========================================================== */
+.challenge-section { background: #ffffff; }
+
+.mission-item-3d {
+  background: #fff5f8;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 0 var(--color-border-3d);
+}
+
+.mission-header {
+  font-size: 24px;
+  color: var(--color-text-dark);
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.m-number {
+  color: var(--color-magenta);
+  font-family: var(--font-pixel-arcade);
+  font-size: 11px;
+  margin-right: 6px;
+}
+
+.m-progress-container-3d {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  padding: 12px 16px;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 0 var(--color-border-3d);
+}
+
+.hearts-slot { display: flex; gap: 8px; font-size: 28px; }
+.slot-heart { transition: transform 0.2s ease; display: inline-block; }
+.slot-heart.collected { transform: scale(1.25); }
+.m-count-text { font-family: var(--font-pixel-arcade); font-size: 11px; color: var(--color-magenta); }
+.mission-tip { font-size: 18px; color: #64748b; }
+
+.challenges-grid { display: flex; flex-direction: column; gap: 12px; }
+
+.challenge-card-3d {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--color-border-3d);
+  transition: all 0.1s ease;
+  position: relative;
+}
+
+.challenge-card-3d input[type="radio"] {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border: 3px solid var(--color-border-3d);
+  border-radius: 4px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.challenge-card-3d input[type="radio"]:checked {
+  background: var(--color-yellow);
+  box-shadow: inset 0 0 0 3px var(--color-border-3d);
+}
+
+.challenge-card-3d:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 0 var(--color-border-3d);
+  background: #fffbeb;
+}
+
+.challenge-card-3d:has(input[type="radio"]:checked) {
+  background: #fdf2f8;
+  border-color: var(--color-border-3d);
+  box-shadow: 0 6px 0 var(--color-border-3d);
+}
+
+.c-content { display: flex; align-items: center; gap: 14px; }
+.c-icon { font-size: 32px; }
+.c-text strong { font-size: 22px; color: var(--color-text-dark); display: block; }
+.c-text p { font-size: 19px; color: #475569; margin-top: 2px; }
+
+/* ==========================================================
+   WHATSAPP ACTION SECTION & GIANT 3D SOLID BUTTON
+   ========================================================== */
+.action-section-3d {
+  background: #f0fdf4;
+  border-color: var(--color-border-3d);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.action-header { display: flex; align-items: center; gap: 10px; }
+
+.mail-icon {
+  font-size: 32px;
+  animation: bounce 1.2s infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
+
+.action-header h3 {
+  font-family: var(--font-pixel-arcade);
+  font-size: 13px;
+  color: #16a34a;
+  letter-spacing: 1px;
+}
+
+.action-desc { font-size: 21px; color: #334155; max-width: 680px; }
+
+.msg-preview-box-3d {
+  background: #ffffff;
+  border: 3px dashed #16a34a;
+  border-radius: 8px;
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 720px;
+  text-align: left;
+  box-shadow: 0 4px 0 var(--color-border-3d);
+}
+
+.preview-label {
+  font-family: var(--font-pixel-arcade);
+  font-size: 10px;
+  color: #16a34a;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.preview-content {
+  font-size: 20px;
+  color: #14532d;
+  font-style: italic;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.btn-wa-giant-3d {
+  background-color: #22c55e;
+  color: #000000;
+  font-size: 13px;
+  padding: 20px 32px;
+  border: 4px solid var(--color-border-3d);
+  border-radius: 12px;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 0 var(--color-border-3d);
+  letter-spacing: 1px;
+  width: 100%;
+  max-width: 640px;
+  margin-top: 8px;
+}
+
+.btn-wa-giant-3d:hover {
+  background-color: #4ade80;
+  transform: translateY(-6px);
+  box-shadow: 0 10px 0 var(--color-border-3d);
+}
+
+.btn-wa-giant-3d:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--color-border-3d);
+}
+
+.wa-icon { font-size: 26px; }
+.wa-number-tag {
+  font-family: var(--font-pixel-arcade);
+  font-size: 10px;
+  color: #475569;
+  letter-spacing: 1px;
+}
+
+.retro-footer {
+  text-align: center;
+  font-size: 19px;
+  color: #475569;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.copyright {
+  font-family: var(--font-pixel-arcade);
+  font-size: 9px;
+  color: #64748b;
+}
+
+/* ==========================================================
+   INTERACTIVE BUTTON SPARKLE / PARTICLE BURST
+   ========================================================== */
+.btn-sparkle-particle {
+  position: fixed;
+  pointer-events: none;
+  font-size: 18px;
+  z-index: 99999;
+  user-select: none;
+  animation: burstParticle 0.8s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes burstParticle {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.4) rotate(var(--rot)); }
+}
+
+.floating-pixel-heart {
+  position: fixed;
+  pointer-events: none;
+  font-size: 28px;
+  z-index: 9999;
+  user-select: none;
+  animation: floatHeart 1.2s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes floatHeart {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.6); }
+  50% { opacity: 1; transform: translate(-50%, -80px) scale(1.3); }
+  100% { opacity: 0; transform: translate(-50%, -150px) scale(0.8); }
+}

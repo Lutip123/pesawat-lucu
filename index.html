@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kapten Kitty & Pesawat Cinta ✈️🐱 | Kangen Banget Tauuu!</title>
+  
+  <!-- Google Fonts: Pixel Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  
+  <!-- Three.js & OrbitControls for 3D Voxel 360° Plane -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Background Canvas for Floating Ambient Pixel Particles & Fluffy Clouds -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <div class="app-container">
+    
+    <!-- Top 3D Header -->
+    <header class="retro-header-3d">
+      <div class="header-badge">
+        <span class="blinking-dot"></span> MISI CINTA: UNGKAPAN KANGEN v4.0
+      </div>
+      <div class="header-actions">
+        <button id="btn-audio" class="btn-3d btn-sm-3d btn-yellow-3d" title="Nyalakan / Matikan Musik Bouncy Imut">
+          <span class="btn-icon">🎵</span> <span id="audio-label">MUSIK IMUT: OFF</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Title Banner -->
+    <section class="banner-section">
+      <h1 class="main-title">
+        <span class="glow-pink">KAPTEN</span> 
+        <span class="glow-cyan">KITTY</span> ✈️🐱
+      </h1>
+      <p class="subtitle">"Psstt... Ada yang kangen banget tauuu sama kamu di darat! 🥺💖"</p>
+    </section>
+
+    <!-- Mode Switcher Tabs (3D Buttons) -->
+    <div class="mode-switcher-container">
+      <div class="switcher-label">PILIH MODE PREVIEW PESAWAT:</div>
+      <div class="mode-buttons">
+        <button id="tab-3d" class="btn-3d btn-mode-3d active-mode">
+          🕹️ 3D VOXEL 360° BEBAS
+        </button>
+        <button id="tab-2d" class="btn-3d btn-mode-3d">
+          ✨ 2D RADAR ORBIT LANGIT
+        </button>
+      </div>
+    </div>
+
+    <!-- Interactive Canvas Viewer Stage (3D Card) -->
+    <div class="viewer-card-3d">
+      <!-- 3D Voxel Viewer Viewport -->
+      <div id="view-3d-wrapper" class="canvas-viewport">
+        <div id="three-container"></div>
+        <div class="canvas-overlay top-left flex justify-between items-center w-full pr-7">
+          <div class="status-pill-3d">
+            <span class="pulse-icon">🐱</span> <span>Mode 3D: Drag / usap layar untuk putar 360° bebas!</span>
+          </div>
+          <div class="status-pill-3d bg-yellow-300 font-pixel-arcade text-xs">
+            <span id="angle-degrees-lbl-main">SUDUT: 360°</span>
+          </div>
+        </div>
+        <div class="canvas-toolbar-3d flex-col items-center gap-2">
+          <!-- 360 Slider -->
+          <div class="w-full max-w-xs bg-white/95 border-2 border-[#1e1b4b] px-3 py-1 rounded-lg flex items-center gap-2 shadow-[0_3px_0_#1e1b4b]">
+            <span class="font-pixel-arcade text-[8px] text-pink-600 shrink-0">360° SLIDER:</span>
+            <input id="slider-360-main" type="range" min="0" max="360" value="45" class="w-full accent-pink-600 cursor-pointer">
+          </div>
+          <div class="flex justify-center gap-2">
+            <button id="btn-barrel-roll" class="btn-3d btn-cyan-3d btn-sm-3d">
+              🌀 SALTO / BARREL ROLL!
+            </button>
+            <button id="btn-toggle-rotate" class="btn-3d btn-magenta-3d btn-sm-3d">
+              🔄 AUTO PUTAR 360°: ON
+            </button>
+            <button id="btn-reset-cam" class="btn-3d btn-pink-3d btn-sm-3d">
+              🎯 RESET SUDUT
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2D Orbital Sky Canvas Viewport -->
+      <div id="view-2d-wrapper" class="canvas-viewport" style="display: none;">
+        <canvas id="canvas-2d-orbit"></canvas>
+        <div class="canvas-overlay top-left">
+          <div class="status-pill-3d">
+            <span class="pulse-icon">✈️</span> <span>Mode 2D: Gerakkan mouse/jari untuk kemudikan pesawat mengitari pulau cinta!</span>
+          </div>
+        </div>
+        <div class="canvas-toolbar-3d">
+          <button id="btn-boost-2d" class="btn-3d btn-cyan-3d btn-sm-3d">
+            🚀 TURBO SPEED!
+          </button>
+          <button id="btn-reverse-orbit" class="btn-3d btn-magenta-3d btn-sm-3d">
+            🔄 BALIK ARAH ORBIT
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RPG Romantic Dialogue Box (3D Style) -->
+    <div class="dialogue-card-3d pixel-box-3d">
+      <div class="avatar-speaker">
+        <div class="pilot-badge-3d">PILOT MEOW</div>
+        <div class="pixel-cat-avatar-3d">
+          <div class="cat-face-ui">
+            <div class="cat-ear ear-l"></div>
+            <div class="cat-ear ear-r"></div>
+            <div class="cat-eyes">
+              <span class="eye"></span>
+              <span class="eye"></span>
+            </div>
+            <div class="cat-blush blush-l"></div>
+            <div class="cat-blush blush-r"></div>
+            <div class="cat-nose"></div>
+            <div class="cat-goggles">👓</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialogue-body">
+        <div class="dialogue-sender">
+          <span>PESAN DARI KOKPIT PESAWAT CINTA:</span>
+        </div>
+        <div id="typewriter-text" class="dialogue-text-3d">
+          <!-- Populated dynamically via JS -->
+        </div>
+        <div class="dialogue-footer">
+          <span class="press-hint">[Klik "Lanjut Cerita" di bawah untuk lanjut]</span>
+          <button id="btn-next-dialogue" class="btn-3d btn-yellow-3d btn-sm-3d">
+            LANJUT CERITA ❯
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURE 1: 3D RETRO JUKEBOX / MUSIK IMUT GEMES -->
+    <div class="jukebox-section pixel-box-3d">
+      <div class="section-badge-3d">🎵 3D PIXEL JUKEBOX</div>
+      <h2 class="section-title">LAGU IMUT GEMES PILIHAN 🎶</h2>
+      <p class="section-desc">
+        Dengarkan musik 8-bit ceria, lucu, dan manis hasil aransemen spesial buat kamu!
+      </p>
+
+      <div class="jukebox-grid">
+        <div class="song-card-3d active-song" data-song="1">
+          <span class="song-icon">🐾</span>
+          <div class="song-info">
+            <strong>1. Bouncing Kitty Love</strong>
+            <p>Melodi melompat-lompat imut & manis</p>
+          </div>
+        </div>
+
+        <div class="song-card-3d" data-song="2">
+          <span class="song-icon">✈️</span>
+          <div class="song-info">
+            <strong>2. Chibi Airplane Flight</strong>
+            <p>Chiptune petualangan seru & ceria</p>
+          </div>
+        </div>
+
+        <div class="song-card-3d" data-song="3">
+          <span class="song-icon">🧋</span>
+          <div class="song-info">
+            <strong>3. Strawberry Boba Pop</strong>
+            <p>Irama gemas teman minum boba</p>
+          </div>
+        </div>
+
+        <div class="song-card-3d" data-song="4">
+          <span class="song-icon">💖</span>
+          <div class="song-info">
+            <strong>4. Peluk Pilot Meow</strong>
+            <p>Nada romantis lembut bikin melting</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visualizer & Control -->
+      <div class="jukebox-visualizer">
+        <div class="now-playing-label">
+          SEDANG DIPUTAR: <span id="current-song-title" class="text-pink-600 font-bold">1. Bouncing Kitty Love 🐾</span>
+        </div>
+        <div class="audio-bars-container" id="visualizer-bars">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURE 2: ROMANTIC QUIZ / KUIS SEBERAPA KANGEN -->
+    <div class="quiz-section pixel-box-3d">
+      <div class="section-badge-3d">📝 MINI GAME KUIS</div>
+      <h2 class="section-title">KUIS: SEBERAPA KANGEN KAMU? 🐱💖</h2>
+      <p class="section-desc">
+        Jawab 3 pertanyaan jujur ini buat menghitung level kangenmu sama si pembuat web!
+      </p>
+
+      <div class="quiz-card-3d">
+        <div id="quiz-container">
+          <div class="quiz-question-box">
+            <div class="quiz-q-num" id="quiz-progress-text">PERTANYAAN 1 DARI 3:</div>
+            <div class="quiz-question-text" id="quiz-question-title">
+              "Berapa kali kamu kepikiran si pembuat web ini dalam sehari?"
+            </div>
+          </div>
+
+          <div class="quiz-options-list" id="quiz-options-container">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Quiz Result Screen -->
+        <div id="quiz-result-box" class="quiz-result-box-3d">
+          <div class="badge-score-3d" id="quiz-result-badge">
+            🏆 HASIL: KANGEN TINGKAT DEWA (1000%)!
+          </div>
+          <p id="quiz-result-desc" class="text-xl text-green-900 mt-2 font-bold">
+            "Diagnosis Pilot Meow: Hati kamu udah sah kangen berat! Gak bisa ditunda lagi, harus segera ketemu!"
+          </p>
+          <button id="btn-retake-quiz" class="btn-3d btn-sm-3d btn-yellow-3d mt-3">
+            🔄 ULANG KUIS
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURE 3: 3D SECRET LOVE LETTER ENVELOPE -->
+    <div class="letter-section pixel-box-3d">
+      <div class="section-badge-3d">✉️ SURAT RAHASIA</div>
+      <h2 class="section-title">AMPLOP PESAN DARI HATI 💌</h2>
+      <p class="section-desc">
+        Ada surat rahasia di dalam amplop 3D ini. Klik amplop untuk membuka isinya!
+      </p>
+
+      <div class="envelope-wrapper-3d" id="love-envelope">
+        <div class="envelope-icon text-5xl mb-2">📫 ➜ 💌</div>
+        <div class="font-pixel-arcade text-xs text-amber-900 font-bold" id="envelope-label">
+          [ KLIK DI SINI UNTUK BUKA SURAT RAHASIA ]
+        </div>
+        <div class="letter-content-box" id="letter-content">
+          <p class="mb-2"><strong>Hai kamu yang paling manis... ✨</strong></p>
+          <p class="mb-2">
+            Terima kasih yaa udah mau buka web pesawat kecil ini. 
+            Jujur waktu bikin ini, tiap baris kodenya kepikiran kamu terus. 
+            Rasanya tuh pengen beneran naik pesawat ini terus mendarat tepat di depan kamu detik ini juga.
+          </p>
+          <p class="mb-2">
+            Jangan lupa jaga kesehatan, jangan telat makan, dan ingat... 
+            di sini ada orang yang <em>kangen banget tauuu</em> sama senyum kamu! 🥺💖
+          </p>
+          <p class="text-right font-bold text-pink-600">- Dari Si Pembuat Web 🐱✈️</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURE 4: SECRET KEY TO "SEMESTA HATI AKU" (MULTI-LEVEL SPACE SHOOTER) -->
+    <div class="secret-key-section">
+      <div class="text-4xl animate-bounce">🔑✨</div>
+      <h2 class="font-pixel-arcade text-xl text-rose-700">AREA RAHASIA: GERBANG SEMESTA HATI</h2>
+      <p class="secret-key-desc">
+        Kalahkan rintangan di tiap level dan hadapi <strong>Boss Terakhir</strong> untuk merebut <strong>"Semesta Hati Aku"</strong> seutuhnya! 
+        <br><span class="text-rose-600 text-lg">⚠️ Hati-hati: Jika pesawat tertabrak musuh, pesawat akan hancur!</span>
+      </p>
+      
+      <!-- Big Glowing 3D Secret Key Button -->
+      <button id="btn-open-shooter" class="btn-3d btn-secret-key-3d">
+        <span>🔑 BUKA KUNCI RAHASIA: TAKLUKKAN SEMESTA HATIKU! 🚀</span>
+      </button>
+    </div>
+
+    <!-- Mini Quest & Challenge Section -->
+    <div class="challenge-section pixel-box-3d">
+      <div class="section-badge-3d">🎯 TANTANGAN UNTUKMU</div>
+      <h2 class="section-title">MISI TEBUSAN RASA KANGEN 💌</h2>
+      <p class="section-desc">
+        Selesaikan misi ini untuk membuka saluran darurat WhatsApp!
+      </p>
+
+      <!-- Mission 1: Collect 5 Love Particles -->
+      <div class="mission-item-3d" id="mission-1-box">
+        <div class="mission-header">
+          <span class="m-number">MISI 1:</span> Tangkap 5 Hati Pixel di layar!
+        </div>
+        <div class="m-progress-container-3d">
+          <div class="hearts-slot" id="hearts-counter-bar">
+            <span class="slot-heart" data-idx="1">🤍</span>
+            <span class="slot-heart" data-idx="2">🤍</span>
+            <span class="slot-heart" data-idx="3">🤍</span>
+            <span class="slot-heart" data-idx="4">🤍</span>
+            <span class="slot-heart" data-idx="5">🤍</span>
+          </div>
+          <span id="hearts-collected-label" class="m-count-text">0 / 5 Tertangkap</span>
+        </div>
+        <div class="mission-tip">
+          💡 <em>Tip: Klik atau sentuh layar di mana saja untuk memancing dan mengumpulkan hati pixel!</em>
+        </div>
+      </div>
+
+      <!-- Mission 2: Choose the Challenge / Request -->
+      <div class="mission-item-3d" id="mission-2-box">
+        <div class="mission-header">
+          <span class="m-number">MISI 2:</span> Pilih 1 Permintaan / Tebusan Kangen (Wajib Disepakati! 😉)
+        </div>
+        <div class="challenges-grid" id="challenges-options">
+          <label class="challenge-card-3d">
+            <input type="radio" name="tebusan" value="Traktir Boba / Es Krim pas ketemu nanti! 🧋🍦" checked />
+            <div class="c-content">
+              <span class="c-icon">🧋</span>
+              <div class="c-text">
+                <strong>Traktir Boba / Es Krim!</strong>
+                <p>Nanti pas ketemu, kamu wajib beliin minuman manis favorit berdua.</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="challenge-card-3d">
+            <input type="radio" name="tebusan" value="Peluk erat 10 detik tanpa protes pas ketemu! 🤗✨" />
+            <div class="c-content">
+              <span class="c-icon">🤗</span>
+              <div class="c-text">
+                <strong>Peluk Erat 10 Detik!</strong>
+                <p>Begitu ketemu, langsung peluk 10 detik full tanpa boleh lepas.</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="challenge-card-3d">
+            <input type="radio" name="tebusan" value="Teleponan / VC temenin ngobrol malam ini! 📞🌙" />
+            <div class="c-content">
+              <span class="c-icon">📞</span>
+              <div class="c-text">
+                <strong>VC / Telponan Malam Ini!</strong>
+                <p>Ceritain harimu sampai ngantuk buat obatin rasa kangen ini.</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="challenge-card-3d">
+            <input type="radio" name="tebusan" value="Kirim PAP muka senyum paling gemas sekarang juga! 📸🥰" />
+            <div class="c-content">
+              <span class="c-icon">📸</span>
+              <div class="c-text">
+                <strong>Kirim PAP Senyum Manis!</strong>
+                <p>Wajib kirim foto ekspresi paling gemas di WhatsApp detik ini juga.</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="challenge-card-3d">
+            <input type="radio" name="tebusan" value="Fix harus luangin waktu jalan berdua weekend ini! 🎡🍧" />
+            <div class="c-content">
+              <span class="c-icon">🎡</span>
+              <div class="c-text">
+                <strong>Date Weekend Ini!</strong>
+                <p>Gak ada alasan mager, weekend ini jadwalnya jalan berdua!</p>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Call To Action (WhatsApp 3D Button) -->
+    <div class="action-section-3d pixel-box-3d">
+      <div class="action-header">
+        <span class="mail-icon">💌</span>
+        <h3>SALURAN DARURAT KANGEN TERHUBUNG</h3>
+      </div>
+      <p class="action-desc">
+        Semua status penaklukan Semesta Hati, hasil kuis, dan tebusan kangen sudah terangkum rapi ke nomor <strong>+62 896-7403-7725</strong>. 
+        Klik tombol solid 3D di bawah ini untuk mengirim balasan!
+      </p>
+
+      <!-- Pre-generated Message Preview Box -->
+      <div class="msg-preview-box-3d">
+        <div class="preview-label">PREVIEW PESAN WHATSAPP LENGKAP:</div>
+        <div id="wa-text-preview" class="preview-content">
+          "Hai kamu! 🐱✈️ Aku barusan buka web pesawat cinta kamu..."
+        </div>
+      </div>
+
+      <!-- Giant Solid 3D WhatsApp Button -->
+      <a id="btn-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="btn-3d btn-wa-giant-3d">
+        <span class="wa-icon">💬</span>
+        <span class="wa-text">KIRIM BALASAN KE WHATSAPP SEKARANG! 💕</span>
+      </a>
+
+      <div class="wa-number-tag">
+        Penerima: +62 896-7403-7725 (Si Paling Kangen)
+      </div>
+    </div>
+
+    <!-- Footer Note -->
+    <footer class="retro-footer">
+      <p>Diterbangkan khusus dari langit cinta penuh awan manis 🌟✈️🐱</p>
+      <p class="copyright">KODE RAHASIA CINTA &copy; 2026. SEMUA RASA KANGEN DIJAMIN 100% ASLI.</p>
+    </footer>
+
+  </div>
+
+  <!-- MULTI-LEVEL ARCADE MODAL: SPACE SHOOTER ("SEMESTA HATI AKU") -->
+  <div id="shooter-modal">
+    <div class="shooter-cabinet-3d">
+      <!-- Arcade Top Bar -->
+      <div class="shooter-top-bar">
+        <span id="shooter-level-display">LEVEL 1: LANGIT AWAN RAGU ☁️</span>
+        <div class="flex items-center gap-3">
+          <span id="shooter-lives-display" class="text-sm">❤️❤️❤️</span>
+          <button id="btn-close-shooter" class="btn-3d btn-sm-3d btn-pink-3d text-[9px] py-1 px-2">
+            ❌ KELUAR
+          </button>
+        </div>
+      </div>
+
+      <!-- Boss Health Bar (Appears in Boss Battle) -->
+      <div class="boss-hud-bar" id="boss-hud-container">
+        <span class="boss-name-label">👑 BOSS: RAKSASA RINDU & GENGSI</span>
+        <div class="boss-hp-track">
+          <div class="boss-hp-fill" id="boss-hp-bar" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <!-- Shooter Canvas -->
+      <canvas id="shooter-canvas" width="600" height="380"></canvas>
+
+      <!-- Arcade Bottom Control Bar -->
+      <div class="shooter-bottom-bar">
+        <div class="shooter-instructions">
+          🎮 <strong>KONTROL:</strong> Geser untuk menghindar! Jangan sampai tertabrak musuh/peluru! Pesawat otomatis menembak laser cinta! ❤️
+        </div>
+        <div class="flex gap-2 items-center">
+          <span class="font-pixel-arcade text-[10px] text-yellow-300">PROGRESS:</span>
+          <span id="shooter-progress-display" class="font-pixel-arcade text-sm text-pink-400">0/5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
